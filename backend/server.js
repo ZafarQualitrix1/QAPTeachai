@@ -22,18 +22,26 @@ connection.connect((err) => {
   }
 });
 
-// API to create table (optional, for setup)
-app.post('/api/create-table', (req, res) => {
-  const sql = `CREATE TABLE IF NOT EXISTS CheckTable (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    mobile VARCHAR(15) NOT NULL,
-    email VARCHAR(100) NOT NULL
-  )`;
-  connection.query(sql, (err, result) => {
+// API to create database (connect without database)
+app.post('/api/create-database', (req, res) => {
+  const tempConnection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT || 3306
+  });
+  tempConnection.connect((err) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ error: 'Connection failed: ' + err.message });
     }
-    res.json({ message: 'Table created successfully' });
+    const sql = 'CREATE DATABASE IF NOT EXISTS QAPTeachai';
+    tempConnection.query(sql, (err, result) => {
+      tempConnection.end();
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: 'Database QAPTeachai created successfully' });
+    });
   });
 });
 
