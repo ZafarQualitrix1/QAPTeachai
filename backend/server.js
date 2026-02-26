@@ -11,7 +11,10 @@ const connection = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306
+  port: process.env.DB_PORT || 3306,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 connection.connect((err) => {
@@ -28,7 +31,10 @@ app.post('/api/create-database', (req, res) => {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT || 3306
+    port: process.env.DB_PORT || 3306,
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
   tempConnection.connect((err) => {
     if (err) {
